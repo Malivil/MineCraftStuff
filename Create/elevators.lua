@@ -85,8 +85,14 @@ local handleFloorSwitch = function(oldFloor, pressed)
     
     -- Open piston logic
     if up then
+        -- Special logic for the 2nd floor
         if pressed == myFloor and myFloor == 2 then
-            -- TODO: Special logic for the second floor to wait for the elevator to pass, then make the piston come out, then reverse the direction of the elevator so it rolls back into the piston to stop
+            -- Wait for the elevator to pass the floor
+            sleep(10)
+            -- Open the piston
+            handlePiston(true)
+            -- Send the elevator back down so it rolls into the piston to stop
+            sendRedstoneMessage(false)
         end
     -- If the elevator is coming down to us then open our piston
     elseif pressed == myFloor then
