@@ -36,7 +36,8 @@ mod.open(redstoneChan)
 local handleRedstone = function()
     rs.setOutput(redstoneSide, redstone)
 end
-local handlePiston = function()
+local handlePiston = function(isOpen)
+    piston = isOpen
     rs.setOutput(pistonSide, piston)
 end
 
@@ -60,20 +61,37 @@ end
 -- Logic
 local handleFloorSwitch = function(oldFloor, pressed)
     if oldFloor == pressed then return end
+    
+    -- Get the piston out of the way first
+    -- This won't make the elevator move because once it's stopped, it stops until the direction changes
     if oldFloor == myFloor then
-        piston = false
-        handlePiston()
+        handlePiston(false)
     end
     
+    local up = pressed > oldFloor
     -- Send "up" redstone message
-    if myFloor > oldFloor then
+    if up then
         sendRedstoneMessage(true)
     -- Send "down" redstone message
     else
+        -- If we're on the 2nd floor and we want to go down, we first have to go up and then go back down so the elevator realizes it can move again
+        if oldFloor == 2 and oldFloor == myFloor then
+            sendRedstoneMessage(true)
+            sleep(0.25)
+        end
+
         sendRedstoneMessage(false)
     end
     
-    -- TODO: Open piston logic (do we need two for the 2nd floor? If not there will be some special logic)
+    -- Open piston logic
+    if up then
+        if pressed == myFloor and myFloor == 2 then
+            -- TODO: Special logic for the second floor to wait for the elevator to pass, then make the piston come out, then reverse the direction of the elevator so it rolls back into the piston to stop
+        end
+    -- If the elevator is coming down to us then open our piston
+    elseif pressed == myFloor then
+        handlePiston(true)
+    end
 end
 
 -- UI
