@@ -121,7 +121,7 @@ local function handleFloorSwitch(pressed)
         -- If we're on one of the middle floors and we want to go down, we first have to go up and then go back down so the elevator realizes it can move again
         if oldFloor > 1 and oldFloor < maxFloors and oldFloor == myFloor then
             handleRedstone(false)
-            sleep(0.5)
+            sleep(1)
         end
 
         handleRedstone(true)
