@@ -105,6 +105,8 @@ local handleFloorSwitch = function(pressed)
     if up then
         -- Special logic for the 2nd floor
         if myFloor == 2 then
+        -- TODO: State not switching immediately on 2nd floor (regardless of floor pressed)
+        -- TODO: Redstone state not switching off if pressed on 2nd floor
             -- Wait for the elevator to pass the floor
             sleep(10)
             -- Open the piston
