@@ -71,6 +71,13 @@ end
 -- Logic --
 -----------
 
+local function updateButtons()
+    buttons.setColor(guiButtons.buttonFirst, colors.white, currentFloor == 1 and colors.green or colors.lightGray)
+    buttons.setColor(guiButtons.buttonSecond, colors.white, currentFloor == 2 and colors.green or colors.lightGray)
+    buttons.setColor(guiButtons.buttonThird, colors.white, currentFloor == 3 and colors.green or colors.lightGray)
+    buttons.draw()
+end
+
 local function handleFloorSwitch(pressed)
     if currentFloor == pressed then return end
     print("[ELEVATOR] Switching floors from " .. currentFloor .. " to " .. pressed)
@@ -119,17 +126,6 @@ local function handleFloorSwitch(pressed)
         handlePiston(true)
     end
 end
-
---------
--- UI --
---------
-
-local function updateButtons()
-    buttons.setColor(guiButtons.buttonFirst, colors.white, currentFloor == 1 and colors.green or colors.lightGray)
-    buttons.setColor(guiButtons.buttonSecond, colors.white, currentFloor == 2 and colors.green or colors.lightGray)
-    buttons.setColor(guiButtons.buttonThird, colors.white, currentFloor == 3 and colors.green or colors.lightGray)
-    buttons.draw()
-end
  
 local function buttonPressed(pressed)
     if moving then return end
@@ -139,18 +135,20 @@ local function buttonPressed(pressed)
     sendFloorMessage()
 end
  
--- Create the buttons
-guiButtons.buttonFirst = buttons.register(1, 1, 7, 1, colors.white, colors.green, " First", function() buttonPressed(1) end)
-guiButtons.buttonSecond = buttons.register(1, 3, 7, 1, colors.white, colors.lightGray, "Second", function() buttonPressed(2) end)
-guiButtons.buttonThird = buttons.register(1, 5, 7, 1, colors.white, colors.lightGray, " Third", function() buttonPressed(3) end)
-
--- Make sure we draw on the monitor
-buttons.setTarget(mon)
-buttons.draw()
-
 ----------
 -- Main --
 ----------
+
+local function renderButtons()
+    -- Create the buttons
+    guiButtons.buttonFirst = buttons.register(1, 1, 7, 1, colors.white, colors.green, " First", function() buttonPressed(1) end)
+    guiButtons.buttonSecond = buttons.register(1, 3, 7, 1, colors.white, colors.lightGray, "Second", function() buttonPressed(2) end)
+    guiButtons.buttonThird = buttons.register(1, 5, 7, 1, colors.white, colors.lightGray, " Third", function() buttonPressed(3) end)
+
+    -- Make sure we draw on the monitor
+    buttons.setTarget(mon)
+    buttons.draw()
+end
 
 local function tick()
     -- Handle all events and redraw the buttons as needed
@@ -194,6 +192,6 @@ local function termHandler()
 end
 
 print("[ELEVATOR] Starting...")
-parallel.waitForAny(tick, termHandler)
+parallel.waitForAny(renderButtons, tick, termHandler)
 
 os.unloadAPI("buttons")
