@@ -25,6 +25,20 @@ local mod = peripheral.find("modem")
 local currentFloor = 1
 local running = true
 local moving = false
+local transitionTimes = {
+    [1] = {
+        [2] = 1,
+        [3] = 1
+    },
+    [2] = {
+        [1] = 1,
+        [3] = 1
+    },
+    [3] = {
+        [1] = 1,
+        [2] = 1
+    }
+}
 
 -- Channels
 local movingChan = 100
@@ -113,7 +127,6 @@ local function handleFloorSwitch(pressed)
     if up then
         -- Special logic for the 2nd floor
         if myFloor == 2 then
-        -- TODO: Redstone state not switching off if pressed on 2nd floor
             -- Wait for the elevator to pass the floor
             sleep(10)
             -- Open the piston
