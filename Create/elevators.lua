@@ -44,7 +44,7 @@ mod.open(movingChan)
 mod.open(redstoneChan)
 
 -- Redstone control
-local handleRedstone = function(isEnabled)
+local function handleRedstone(isEnabled)
     print("[ELEVATOR] Setting redstone state to: " .. (isEnabled and "ON" or "OFF"))
     if myFloor == 1 then
         rs.setOutput(redstoneSide, isEnabled)
@@ -52,7 +52,7 @@ local handleRedstone = function(isEnabled)
         mod.transmit(redstoneChan, redstoneChan, isEnabled and "1" or "0")
     end
 end
-local handlePiston = function(isOpen)
+local function handlePiston(isOpen)
     if myFloor == 1 then return end
 
     print("[ELEVATOR] Setting piston state to: " .. (isEnabled and "OPEN" or "CLOSED"))
@@ -60,10 +60,10 @@ local handlePiston = function(isOpen)
 end
 
 -- Messaging
-local sendFloorMessage = function()
+local function sendFloorMessage()
     mod.transmit(currentFloor, currentFloor, "1")
 end
-local sendMovingMessage = function(isMoving)
+local function sendMovingMessage(isMoving)
     mod.transmit(movingChan, movingChan, isMoving and "1" or "0")
 end
 
@@ -71,11 +71,12 @@ end
 -- Logic --
 -----------
 
-local handleFloorSwitch = function(pressed)
+local function handleFloorSwitch(pressed)
     if currentFloor == pressed then return end
     print("[ELEVATOR] Switching floors from " .. currentFloor .. " to " .. pressed)
     local oldFloor = currentFloor
     currentFloor = pressed
+    updateButtons()
     
     -- Get the piston out of the way first
     -- This won't make the elevator move because once it's stopped, it stops until the direction changes
@@ -123,19 +124,18 @@ end
 -- UI --
 --------
 
-local updateButtons = function()
+local function updateButtons()
     buttons.setColor(guiButtons.buttonFirst, colors.white, currentFloor == 1 and colors.green or colors.lightGray)
     buttons.setColor(guiButtons.buttonSecond, colors.white, currentFloor == 2 and colors.green or colors.lightGray)
     buttons.setColor(guiButtons.buttonThird, colors.white, currentFloor == 3 and colors.green or colors.lightGray)
     buttons.draw()
 end
  
-local buttonPressed = function(pressed)
+local function buttonPressed(pressed)
     if moving then return end
     if currentFloor == pressed then return end
     print("[ELEVATOR] Player pressed button: " .. pressed)
     handleFloorSwitch(pressed)
-    updateButtons()
     sendFloorMessage()
 end
  
@@ -152,7 +152,7 @@ buttons.draw()
 -- Main --
 ----------
 
-local tick = function()
+local function tick()
     -- Handle all events and redraw the buttons as needed
     while running do
         local eventArray = {os.pullEventRaw()}
@@ -162,7 +162,6 @@ local tick = function()
             -- Handle floor call messages
             if channel >= 1 and channel <= 3 then
                 print("[ELEVATOR] Received message from channel " .. channel .. ": " .. message)
-                updateButtons()
                 handleFloorSwitch(channel)
             -- Handle moving message
             elseif channel == movingChan then
@@ -185,7 +184,7 @@ local tick = function()
     end
 end
 
-local termHandler = function()
+local function termHandler()
     os.pullEventRaw("terminate")
     print("[ELEVATOR] Shutting down cleanly")
     handleRedstone(false)
