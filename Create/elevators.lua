@@ -178,38 +178,47 @@ buttons.draw()
 -- Main --
 ----------
 
--- Handle all events and redraw the buttons as needed
-while running do
-    local eventArray = {os.pullEventRaw()}
-    if eventArray[1] == "modem_message" then
-        local channel = eventArray[3]
-        local message = eventArray[5]
-        -- Handle floor call messages
-        if channel >= 1 and channel <= 3 then
-            print("[ELEVATOR] Received message from channel " .. channel .. ": " .. message)
-            handleFloorSwitch(channel)
-            updateButtons()
-        -- Handle moving message
-        elseif channel == movingChan then
-            moving = message == "1"
-            local state = moving and "now" or "no longer"
-            print("[ELEVATOR] Elevator is " .. state .. " moving")
-        -- Handle redstone control message
-        elseif myFloor == 1 and channel == redstoneChan then
-            local isEnabled = message == "1"
-            local state = isEnabled and "enabled" or "disabled"
-            print("[ELEVATOR] Redstone is now " .. state)
-            handleRedstone(isEnabled)
+local tick = function()
+    -- Handle all events and redraw the buttons as needed
+    while running do
+        local eventArray = {os.pullEvent()}
+        if eventArray[1] == "modem_message" then
+            local channel = eventArray[3]
+            local message = eventArray[5]
+            -- Handle floor call messages
+            if channel >= 1 and channel <= 3 then
+                print("[ELEVATOR] Received message from channel " .. channel .. ": " .. message)
+                handleFloorSwitch(channel)
+                updateButtons()
+            -- Handle moving message
+            elseif channel == movingChan then
+                moving = message == "1"
+                local state = moving and "now" or "no longer"
+                print("[ELEVATOR] Elevator is " .. state .. " moving")
+            -- Handle redstone control message
+            elseif myFloor == 1 and channel == redstoneChan then
+                local isEnabled = message == "1"
+                local state = isEnabled and "enabled" or "disabled"
+                print("[ELEVATOR] Redstone is now " .. state)
+                handleRedstone(isEnabled)
+            end
+        else
+            buttons.event(eventArray)
+            buttons.draw()
         end
-    elseif eventArray[i] == "terminate" then
-        print("[ELEVATOR] Shutting down cleanly")
-        handleRedstone(false)
-        handlePiston(false)
-        running = false
-    else
-        buttons.event(eventArray)
-        buttons.draw()
     end
 end
- 
+
+local termHandler = function()
+    os.pullEventRaw("terminate")
+    print("[ELEVATOR] Shutting down cleanly")
+    handleRedstone(false)
+    handlePiston(false)
+    mon.clear()
+    running = false
+end
+
+print("[ELEVATOR] Starting...")
+parallel.waitForAny(tick, termHandler)
+
 os.unloadAPI("buttons")
