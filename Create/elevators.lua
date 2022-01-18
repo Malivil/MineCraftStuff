@@ -119,9 +119,9 @@ local function handleFloorSwitch(pressed)
     -- Send "down" redstone message
     else
         -- If we're on one of the middle floors and we want to go down, we first have to go up and then go back down so the elevator realizes it can move again
-        if oldFloor > 1 and oldFloor < maxFloors and oldFloor == myFloor then
+        if oldFloor > 1 and oldFloor < maxFloors then
             handleRedstone(false)
-            sleep(1)
+            sleep(0.25)
         end
 
         handleRedstone(true)
@@ -135,7 +135,7 @@ local function handleFloorSwitch(pressed)
         -- Special logic for the middle floors
         if myFloor > 1 and myFloor < maxFloors then
             -- Wait for the elevator to pass the floor
-            sleep(transitionTimes[3][2])
+            sleep(transitionTimes[oldFloor][currentFloor])
             -- Open the piston
             handlePiston(true)
             -- Send the elevator back down so it rolls into the piston to stop
@@ -208,7 +208,9 @@ end
 local function termHandler()
     os.pullEventRaw("terminate")
     print("[ELEVATOR] Shutting down cleanly")
-    handleRedstone(false)
+    if myFloor == 1 then
+        handleRedstone(false)
+    end
     handlePiston(false)
     running = false
 end
