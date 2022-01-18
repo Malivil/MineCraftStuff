@@ -25,18 +25,19 @@ local mod = peripheral.find("modem")
 local currentFloor = 1
 local running = true
 local moving = false
+local movingTimer = nil
 local transitionTimes = {
     [1] = {
-        [2] = 1,
-        [3] = 1
+        [2] = 3,
+        [3] = 5
     },
     [2] = {
-        [1] = 1,
-        [3] = 1
+        [1] = 3,
+        [3] = 5
     },
     [3] = {
-        [1] = 1,
-        [2] = 1
+        [1] = 5,
+        [2] = 3
     }
 }
 
@@ -99,6 +100,10 @@ local function handleFloorSwitch(pressed)
     currentFloor = pressed
     updateButtons()
     
+    print("[ELEVATOR] Elevator has started moving")
+    moving = true
+    movingTimer = os.startTimer(transitionTimes[oldFloor, currentFloor])
+    
     -- Get the piston out of the way first
     -- This won't make the elevator move because once it's stopped, it stops until the direction changes
     if oldFloor == myFloor then
@@ -128,7 +133,7 @@ local function handleFloorSwitch(pressed)
         -- Special logic for the 2nd floor
         if myFloor == 2 then
             -- Wait for the elevator to pass the floor
-            sleep(10)
+            sleep(transitionTimes[3][2])
             -- Open the piston
             handlePiston(true)
             -- Send the elevator back down so it rolls into the piston to stop
@@ -186,8 +191,10 @@ local function tick()
                 print("[ELEVATOR] Redstone is now " .. state)
                 handleRedstone(isEnabled)
             end
-        elseif eventArray[i] == "terminate" then
-            -- Do nothing
+        elseif eventArray[1] == "timer" and eventArray[2] == movingTimer then
+            print("[ELEVATOR] Elevator has stopped moving")
+            moving = false
+            movingTimer = nil
         else
             buttons.event(eventArray)
             buttons.draw()
