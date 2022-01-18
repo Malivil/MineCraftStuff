@@ -187,11 +187,13 @@ local function termHandler()
     print("[ELEVATOR] Shutting down cleanly")
     handleRedstone(false)
     handlePiston(false)
-    mon.clear()
     running = false
 end
 
 print("[ELEVATOR] Starting...")
 parallel.waitForAll(renderButtons, tick, termHandler)
+
+-- Clear the screen
+mon.clear()
 
 os.unloadAPI("buttons")
