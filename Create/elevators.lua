@@ -104,6 +104,7 @@ local function handleFloorSwitch(pressed)
     print("[ELEVATOR] Elevator has started moving")
     moving = true
     movingTimer = os.startTimer(transitionTimes[oldFloor][currentFloor])
+    sendMovingMessage(true)
     
     -- Get the piston out of the way first
     -- This won't make the elevator move because once it's stopped, it stops until the direction changes
@@ -199,6 +200,7 @@ local function tick()
             print("[ELEVATOR] Elevator has stopped moving")
             moving = false
             movingTimer = nil
+            sendMovingMessage(false)
         else
             buttons.event(eventArray)
             buttons.draw()
