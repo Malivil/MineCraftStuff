@@ -29,16 +29,16 @@ local moving = false
 local movingTimer = nil
 local transitionTimes = {
     [1] = {
-        [2] = 3,
+        [2] = 2,
         [3] = 5
     },
     [2] = {
-        [1] = 3,
+        [1] = 2,
         [3] = 5
     },
     [3] = {
         [1] = 5,
-        [2] = 3
+        [2] = 2
     }
 }
 
@@ -112,9 +112,6 @@ local function handleFloorSwitch(pressed)
         handlePiston(false)
     end
     
-    -- TODO: Re-do redstone logic
-    -- Redstone needs to "pin" direction based on current floor. e.g. first should stay in "up" direction, 2nd and 3rd should stay in "down" to pin it against whatever retaining floor/ceiling there is
-    
     local up = oldFloor > pressed
     -- Send "up" redstone message
     if up then
@@ -124,7 +121,7 @@ local function handleFloorSwitch(pressed)
         -- If we're on one of the middle floors and we want to go down, we first have to go up and then go back down so the elevator realizes it can move again
         if oldFloor > 1 and oldFloor < maxFloors and oldFloor == myFloor then
             handleRedstone(false)
-            sleep(0.25)
+            sleep(0.5)
         end
 
         handleRedstone(true)
