@@ -181,7 +181,7 @@ buttons.draw()
 local tick = function()
     -- Handle all events and redraw the buttons as needed
     while running do
-        local eventArray = {os.pullEvent()}
+        local eventArray = {os.pullEventRaw()}
         if eventArray[1] == "modem_message" then
             local channel = eventArray[3]
             local message = eventArray[5]
@@ -202,6 +202,7 @@ local tick = function()
                 print("[ELEVATOR] Redstone is now " .. state)
                 handleRedstone(isEnabled)
             end
+        elseif eventArray[i] == "terminate" then
         else
             buttons.event(eventArray)
             buttons.draw()
