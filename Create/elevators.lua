@@ -110,6 +110,9 @@ local function handleFloorSwitch(pressed)
         handlePiston(false)
     end
     
+    -- TODO: Re-do redstone logic
+    -- Redstone needs to "pin" direction based on current floor. e.g. first should stay in "up" direction, 2nd and 3rd should stay in "down" to pin it against whatever retaining floor/ceiling there is
+    
     local up = oldFloor > pressed
     -- Send "up" redstone message
     if up then
