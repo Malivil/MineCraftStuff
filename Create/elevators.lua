@@ -192,6 +192,6 @@ local function termHandler()
 end
 
 print("[ELEVATOR] Starting...")
-parallel.waitForAny(renderButtons, tick, termHandler)
+parallel.waitForAll(renderButtons, tick, termHandler)
 
 os.unloadAPI("buttons")
