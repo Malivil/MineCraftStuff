@@ -6,6 +6,7 @@ os.loadAPI("disk/buttons.lua")
 -------------------
 
 local myFloor = 1
+local maxFloors = 3
 
 -- Direction control
 local redstoneSide = "right"
@@ -116,16 +117,16 @@ local function handleFloorSwitch(pressed)
     local up = oldFloor > pressed
     -- Send "up" redstone message
     if up then
-        handleRedstone(true)
+        handleRedstone(false)
     -- Send "down" redstone message
     else
-        -- If we're on the 2nd floor and we want to go down, we first have to go up and then go back down so the elevator realizes it can move again
-        if oldFloor == 2 and oldFloor == myFloor then
-            handleRedstone(true)
+        -- If we're on one of the middle floors and we want to go down, we first have to go up and then go back down so the elevator realizes it can move again
+        if oldFloor > 1 and oldFloor < maxFloors and oldFloor == myFloor then
+            handleRedstone(false)
             sleep(0.25)
         end
 
-        handleRedstone(false)
+        handleRedstone(true)
     end
     
     -- Everything below is about controlling local pistons and only applies to the computer handling the destination floor
@@ -133,14 +134,14 @@ local function handleFloorSwitch(pressed)
     
     -- Open piston logic
     if up then
-        -- Special logic for the 2nd floor
-        if myFloor == 2 then
+        -- Special logic for the middle floors
+        if myFloor > 1 and myFloor < maxFloors then
             -- Wait for the elevator to pass the floor
             sleep(transitionTimes[3][2])
             -- Open the piston
             handlePiston(true)
             -- Send the elevator back down so it rolls into the piston to stop
-            handleRedstone(false)
+            handleRedstone(true)
         end
     -- If the elevator is coming down to us then open our piston
     else
@@ -179,7 +180,7 @@ local function tick()
             local channel = eventArray[3]
             local message = eventArray[5]
             -- Handle floor call messages
-            if channel >= 1 and channel <= 3 then
+            if channel >= 1 and channel <= maxFloors then
                 print("[ELEVATOR] Received message from channel " .. channel .. ": " .. message)
                 handleFloorSwitch(channel)
             -- Handle moving message
