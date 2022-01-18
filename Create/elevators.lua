@@ -195,7 +195,7 @@ while running do
             local state = moving and "now" or "no longer"
             print("[ELEVATOR] Elevator is " .. state .. " moving")
         -- Handle redstone control message
-        else if myFloor == 1 and channel == redstoneChan then
+        elseif myFloor == 1 and channel == redstoneChan then
             local isEnabled = message == "1"
             local state = isEnabled and "enabled" or "disabled"
             print("[ELEVATOR] Redstone is now " .. state)
