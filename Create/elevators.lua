@@ -60,8 +60,8 @@ local function handlePiston(isOpen)
 end
 
 -- Messaging
-local function sendFloorMessage()
-    mod.transmit(currentFloor, currentFloor, "1")
+local function sendFloorMessage(pressed)
+    mod.transmit(pressed, pressed, "1")
 end
 local function sendMovingMessage(isMoving)
     mod.transmit(movingChan, movingChan, isMoving and "1" or "0")
@@ -131,8 +131,8 @@ local function buttonPressed(pressed)
     if moving then return end
     if currentFloor == pressed then return end
     print("[ELEVATOR] Player pressed button: " .. pressed)
+    sendFloorMessage(pressed)
     handleFloorSwitch(pressed)
-    sendFloorMessage()
 end
  
 ----------
