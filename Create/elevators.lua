@@ -105,7 +105,6 @@ local handleFloorSwitch = function(pressed)
     if up then
         -- Special logic for the 2nd floor
         if myFloor == 2 then
-        -- TODO: State not switching immediately on 2nd floor (regardless of floor pressed)
         -- TODO: Redstone state not switching off if pressed on 2nd floor
             -- Wait for the elevator to pass the floor
             sleep(10)
@@ -131,46 +130,19 @@ local updateButtons = function()
     buttons.draw()
 end
  
-local goFirst = function()
-    handleFloorSwitch(1)
-end
-local firstPressed = function()
+local buttonPressed = function(pressed)
     if moving then return end
-    if currentFloor == 1 then return end
-    print("[ELEVATOR] Player pressed \"First\" button")
-    goFirst()
-    updateButtons()
-    sendFloorMessage()
-end
-
-local goSecond = function()
-    handleFloorSwitch(2)
-end
-local secondPressed = function()
-    if moving then return end
-    if currentFloor == 2 then return end
-    print("[ELEVATOR] Player pressed \"Second\" button")
-    goSecond()
-    updateButtons()
-    sendFloorMessage()
-end
-
-local goThird = function()
-    handleFloorSwitch(3)
-end
-local thirdPressed = function()
-    if moving then return end
-    if currentFloor == 3 then return end
-    print("[ELEVATOR] Player pressed \"Third\" button")
-    goThird()
+    if currentFloor == pressed then return end
+    print("[ELEVATOR] Player pressed button: " .. pressed)
+    handleFloorSwitch(pressed)
     updateButtons()
     sendFloorMessage()
 end
  
 -- Create the buttons
-guiButtons.buttonFirst = buttons.register(1, 1, 7, 1, colors.white, colors.green, " First", firstPressed)
-guiButtons.buttonSecond = buttons.register(1, 3, 7, 1, colors.white, colors.lightGray, "Second", secondPressed)
-guiButtons.buttonThird = buttons.register(1, 5, 7, 1, colors.white, colors.lightGray, " Third", thirdPressed)
+guiButtons.buttonFirst = buttons.register(1, 1, 7, 1, colors.white, colors.green, " First", function() buttonPressed(1) end)
+guiButtons.buttonSecond = buttons.register(1, 3, 7, 1, colors.white, colors.lightGray, "Second", function() buttonPressed(2) end)
+guiButtons.buttonThird = buttons.register(1, 5, 7, 1, colors.white, colors.lightGray, " Third", function() buttonPressed(3) end)
 
 -- Make sure we draw on the monitor
 buttons.setTarget(mon)
@@ -190,8 +162,8 @@ local tick = function()
             -- Handle floor call messages
             if channel >= 1 and channel <= 3 then
                 print("[ELEVATOR] Received message from channel " .. channel .. ": " .. message)
-                handleFloorSwitch(channel)
                 updateButtons()
+                handleFloorSwitch(channel)
             -- Handle moving message
             elseif channel == movingChan then
                 moving = message == "1"
@@ -205,6 +177,7 @@ local tick = function()
                 handleRedstone(isEnabled)
             end
         elseif eventArray[i] == "terminate" then
+            -- Do nothing
         else
             buttons.event(eventArray)
             buttons.draw()
