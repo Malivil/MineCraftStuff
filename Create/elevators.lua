@@ -6,7 +6,7 @@ os.loadAPI("disk/buttons.lua")
 -------------------
 
 local myFloor = 1
-local maxFloors = 3
+local maxFloors = 4
 
 -- Direction control
 local redstoneSide = "right"
@@ -30,15 +30,23 @@ local movingTimer = nil
 local transitionTimes = {
     [1] = {
         [2] = 1.1,
-        [3] = 2.5
+        [3] = 2.5,
+        [4] = 10
     },
     [2] = {
         [1] = 1.1,
-        [3] = 2
+        [3] = 2,
+        [4] = 10
     },
     [3] = {
         [1] = 2.5,
-        [2] = 1.5
+        [2] = 1.5,
+        [4] = 10
+    },
+    [4] = {
+        [1] = 10,
+        [2] = 10,
+        [3] = 10
     }
 }
 
@@ -91,6 +99,7 @@ local function updateButtons()
     buttons.setColor(guiButtons.buttonFirst, colors.white, currentFloor == 1 and colors.green or colors.lightGray)
     buttons.setColor(guiButtons.buttonSecond, colors.white, currentFloor == 2 and colors.green or colors.lightGray)
     buttons.setColor(guiButtons.buttonThird, colors.white, currentFloor == 3 and colors.green or colors.lightGray)
+    buttons.setColor(guiButtons.buttonFourth, colors.white, currentFloor == 4 and colors.green or colors.lightGray)
     buttons.draw()
 end
 
@@ -161,9 +170,10 @@ end
 
 local function renderButtons()
     -- Create the buttons
-    guiButtons.buttonFirst = buttons.register(1, 1, 7, 1, colors.white, colors.green, " First", function() buttonPressed(1) end)
-    guiButtons.buttonSecond = buttons.register(1, 3, 7, 1, colors.white, colors.lightGray, "Second", function() buttonPressed(2) end)
-    guiButtons.buttonThird = buttons.register(1, 5, 7, 1, colors.white, colors.lightGray, " Third", function() buttonPressed(3) end)
+    guiButtons.buttonFirst = buttons.register(1, 1, 3, 2, colors.white, colors.green, "1", function() buttonPressed(1) end)
+    guiButtons.buttonSecond = buttons.register(3, 1, 3, 2, colors.white, colors.lightGray, "2", function() buttonPressed(2) end)
+    guiButtons.buttonThird = buttons.register(1, 4, 3, 2, colors.white, colors.lightGray, "3", function() buttonPressed(3) end)
+    guiButtons.buttonFourth = buttons.register(3, 4, 3, 2, colors.white, colors.lightGray, "4", function() buttonPressed(4) end)
 
     -- Make sure we draw on the monitor
     buttons.setTarget(mon)
