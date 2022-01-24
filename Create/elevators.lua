@@ -171,9 +171,9 @@ end
 local function renderButtons()
     -- Create the buttons
     guiButtons.buttonFirst = buttons.register(1, 1, 3, 2, colors.white, colors.green, "1", function() buttonPressed(1) end)
-    guiButtons.buttonSecond = buttons.register(3, 1, 3, 2, colors.white, colors.lightGray, "2", function() buttonPressed(2) end)
+    guiButtons.buttonSecond = buttons.register(5, 1, 3, 2, colors.white, colors.lightGray, "2", function() buttonPressed(2) end)
     guiButtons.buttonThird = buttons.register(1, 4, 3, 2, colors.white, colors.lightGray, "3", function() buttonPressed(3) end)
-    guiButtons.buttonFourth = buttons.register(3, 4, 3, 2, colors.white, colors.lightGray, "4", function() buttonPressed(4) end)
+    guiButtons.buttonFourth = buttons.register(5, 4, 3, 2, colors.white, colors.lightGray, "4", function() buttonPressed(4) end)
 
     -- Make sure we draw on the monitor
     buttons.setTarget(mon)
