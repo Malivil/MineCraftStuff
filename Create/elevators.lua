@@ -5,8 +5,9 @@ os.loadAPI("disk/buttons.lua")
 -- Configuration --
 -------------------
 
-local myFloor = 1
-local maxFloors = 4
+local myFloor = 0
+local minFloor = 0
+local maxFloors = 5
 
 -- Direction control
 local redstoneSide = "right"
@@ -23,30 +24,52 @@ local mon = peripheral.find("monitor")
 local mod = peripheral.find("modem")
 
 -- State tracking
-local currentFloor = 1
+local currentFloor = 0
 local running = true
 local moving = false
 local movingTimer = nil
 local transitionTimes = {
+    [0] = {
+        [1] = 10,
+        [2] = 10,
+        [3] = 10,
+        [4] = 10,
+        [5] = 10
+    },
     [1] = {
+        [0] = 10,
         [2] = 1.1,
-        [3] = 2.5,
-        [4] = 6.5
+        [3] = 10,
+        [4] = 2.5,
+        [5] = 6.5
     },
     [2] = {
+        [0] = 10,
         [1] = 1.1,
-        [3] = 2,
-        [4] = 5.5
+        [3] = 10,
+        [4] = 2,
+        [5] = 5.5
     },
     [3] = {
-        [1] = 2.5,
-        [2] = 1.5,
-        [4] = 4.25
+        [0] = 10,
+        [1] = 10,
+        [2] = 10,
+        [4] = 10,
+        [5] = 10
     },
     [4] = {
+        [0] = 10,
+        [1] = 2.5,
+        [2] = 1.5,
+        [3] = 10,
+        [5] = 4.25
+    },
+    [5] = {
+        [0] = 10,
         [1] = 6.5,
         [2] = 5.5,
-        [3] = 4.5
+        [3] = 10,
+        [4] = 4.5
     }
 }
 
@@ -59,7 +82,7 @@ local redstoneChan = 101
 -------------------
 
 -- Floor channels
-for c = 1, maxFloors do
+for c = minFloor, maxFloors do
     mod.open(c)
 end
 -- Movement reporting channel
@@ -70,14 +93,14 @@ mod.open(redstoneChan)
 -- Redstone control
 local function handleRedstone(isEnabled)
     print("[ELEVATOR] Setting redstone state to: " .. (isEnabled and "ON" or "OFF"))
-    if myFloor == 1 then
+    if myFloor == minFloor then
         rs.setOutput(redstoneSide, isEnabled)
     else
         mod.transmit(redstoneChan, redstoneChan, isEnabled and "1" or "0")
     end
 end
 local function handlePiston(isOpen)
-    if myFloor == 1 then return end
+    if myFloor == minFloor then return end
 
     print("[ELEVATOR] Setting piston state to: " .. (isEnabled and "OPEN" or "CLOSED"))
     rs.setOutput(pistonSide, isOpen)
@@ -96,10 +119,12 @@ end
 -----------
 
 local function updateButtons()
+    buttons.setColor(guiButtons.buttonGround, colors.white, currentFloor == 0 and colors.green or colors.lightGray)
     buttons.setColor(guiButtons.buttonFirst, colors.white, currentFloor == 1 and colors.green or colors.lightGray)
     buttons.setColor(guiButtons.buttonSecond, colors.white, currentFloor == 2 and colors.green or colors.lightGray)
     buttons.setColor(guiButtons.buttonThird, colors.white, currentFloor == 3 and colors.green or colors.lightGray)
     buttons.setColor(guiButtons.buttonFourth, colors.white, currentFloor == 4 and colors.green or colors.lightGray)
+    buttons.setColor(guiButtons.buttonFifth, colors.white, currentFloor == 5 and colors.green or colors.lightGray)
     buttons.draw()
 end
 
@@ -128,7 +153,7 @@ local function handleFloorSwitch(pressed)
     -- Send "down" redstone message
     else
         -- If we're on one of the middle floors and we want to go down, we first have to go up and then go back down so the elevator realizes it can move again
-        if oldFloor > 1 and oldFloor < maxFloors then
+        if oldFloor > minFloor and oldFloor < maxFloors then
             handleRedstone(false)
             sleep(0.25)
         end
@@ -142,7 +167,7 @@ local function handleFloorSwitch(pressed)
     -- Open piston logic
     if up then
         -- Special logic for the middle floors
-        if myFloor > 1 and myFloor < maxFloors then
+        if myFloor > minFloor and myFloor < maxFloors then
             -- Wait for the elevator to pass the floor
             sleep(transitionTimes[oldFloor][currentFloor])
             -- Open the piston
@@ -170,10 +195,12 @@ end
 
 local function renderButtons()
     -- Create the buttons
-    guiButtons.buttonFirst = buttons.register(1, 1, 3, 2, colors.white, colors.green, "1", function() buttonPressed(1) end)
-    guiButtons.buttonSecond = buttons.register(5, 1, 3, 2, colors.white, colors.lightGray, "2", function() buttonPressed(2) end)
-    guiButtons.buttonThird = buttons.register(1, 4, 3, 2, colors.white, colors.lightGray, "3", function() buttonPressed(3) end)
-    guiButtons.buttonFourth = buttons.register(5, 4, 3, 2, colors.white, colors.lightGray, "4", function() buttonPressed(4) end)
+    guiButtons.buttonGround = buttons.register(1, 1, 3, 2, colors.white, colors.green, "G", function() buttonPressed(0) end)
+    guiButtons.buttonFirst = buttons.register(5, 1, 3, 2, colors.white, colors.lightGray, "1", function() buttonPressed(1) end)
+    guiButtons.buttonSecond = buttons.register(1, 4, 3, 2, colors.white, colors.lightGray, "2", function() buttonPressed(2) end)
+    guiButtons.buttonThird = buttons.register(5, 4, 3, 2, colors.white, colors.lightGray, "3", function() buttonPressed(3) end)
+    guiButtons.buttonFourth = buttons.register(1, 7, 3, 2, colors.white, colors.lightGray, "4", function() buttonPressed(4) end)
+    guiButtons.buttonFiften = buttons.register(5, 7, 3, 2, colors.white, colors.lightGray, "5", function() buttonPressed(5) end)
 
     -- Make sure we draw on the monitor
     buttons.setTarget(mon)
@@ -188,7 +215,7 @@ local function tick()
             local channel = eventArray[3]
             local message = eventArray[5]
             -- Handle floor call messages
-            if channel >= 1 and channel <= maxFloors then
+            if channel >= minFloor and channel <= maxFloors then
                 print("[ELEVATOR] Received message from channel " .. channel .. ": " .. message)
                 handleFloorSwitch(channel)
             -- Handle moving message
@@ -197,7 +224,7 @@ local function tick()
                 local state = moving and "now" or "no longer"
                 print("[ELEVATOR] Elevator is " .. state .. " moving")
             -- Handle redstone control message
-            elseif myFloor == 1 and channel == redstoneChan then
+            elseif myFloor == minFloor and channel == redstoneChan then
                 local isEnabled = message == "1"
                 local state = isEnabled and "enabled" or "disabled"
                 print("[ELEVATOR] Redstone is now " .. state)
@@ -218,7 +245,7 @@ end
 local function termHandler()
     os.pullEventRaw("terminate")
     print("[ELEVATOR] Shutting down cleanly")
-    if myFloor == 1 then
+    if myFloor == minFloor then
         handleRedstone(false)
     end
     handlePiston(false)
