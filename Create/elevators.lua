@@ -119,12 +119,12 @@ end
 -----------
 
 local function updateButtons()
-    buttons.setColor(guiButtons.buttonGround, colors.white, currentFloor == 0 and colors.green or colors.lightGray)
-    buttons.setColor(guiButtons.buttonFirst, colors.white, currentFloor == 1 and colors.green or colors.lightGray)
-    buttons.setColor(guiButtons.buttonSecond, colors.white, currentFloor == 2 and colors.green or colors.lightGray)
-    buttons.setColor(guiButtons.buttonThird, colors.white, currentFloor == 3 and colors.green or colors.lightGray)
-    buttons.setColor(guiButtons.buttonFourth, colors.white, currentFloor == 4 and colors.green or colors.lightGray)
-    buttons.setColor(guiButtons.buttonFifth, colors.white, currentFloor == 5 and colors.green or colors.lightGray)
+    buttons.setColor(guiButtons.buttonGround, colors.white, currentFloor == 1 and colors.green or colors.lightGray)
+    buttons.setColor(guiButtons.buttonFirst, colors.white, currentFloor == 2 and colors.green or colors.lightGray)
+    buttons.setColor(guiButtons.buttonSecond, colors.white, currentFloor == 3 and colors.green or colors.lightGray)
+    buttons.setColor(guiButtons.buttonThird, colors.white, currentFloor == 4 and colors.green or colors.lightGray)
+    buttons.setColor(guiButtons.buttonFourth, colors.white, currentFloor == 5 and colors.green or colors.lightGray)
+    buttons.setColor(guiButtons.buttonFifth, colors.white, currentFloor == 6 and colors.green or colors.lightGray)
     buttons.draw()
 end
 
