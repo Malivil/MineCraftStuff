@@ -6,8 +6,13 @@ os.loadAPI("disk/buttons.lua")
 -------------------
 
 local myFloor = 1
+
 local minFloor = 1
 local maxFloors = 6
+
+local myFloorColor = colors.cyan
+local currentFloorColor = colors.green
+local otherFloorColor = colors.lightGray
 
 -- Direction control
 local redstoneSide = "back"
@@ -118,13 +123,19 @@ end
 -- Logic --
 -----------
 
+local function getButtonColor(pressed)
+    if currentFloor == pressed then return currentFloorColor end
+    if myFloor == pressed then return myFloorColor end
+    return otherFloorColor
+end
+
 local function updateButtons()
-    buttons.setColor(guiButtons.buttonGround, colors.white, currentFloor == 1 and colors.green or colors.lightGray)
-    buttons.setColor(guiButtons.buttonFirst, colors.white, currentFloor == 2 and colors.green or colors.lightGray)
-    buttons.setColor(guiButtons.buttonSecond, colors.white, currentFloor == 3 and colors.green or colors.lightGray)
-    buttons.setColor(guiButtons.buttonThird, colors.white, currentFloor == 4 and colors.green or colors.lightGray)
-    buttons.setColor(guiButtons.buttonFourth, colors.white, currentFloor == 5 and colors.green or colors.lightGray)
-    buttons.setColor(guiButtons.buttonFifth, colors.white, currentFloor == 6 and colors.green or colors.lightGray)
+    buttons.setColor(guiButtons.buttonGround, colors.white, getButtonColor(1))
+    buttons.setColor(guiButtons.buttonFirst, colors.white, getButtonColor(2))
+    buttons.setColor(guiButtons.buttonSecond, colors.white, getButtonColor(3))
+    buttons.setColor(guiButtons.buttonThird, colors.white, getButtonColor(4))
+    buttons.setColor(guiButtons.buttonFourth, colors.white, getButtonColor(5))
+    buttons.setColor(guiButtons.buttonFifth, colors.white, getButtonColor(6))
     buttons.draw()
 end
 
@@ -195,16 +206,16 @@ end
 
 local function renderButtons()
     -- Create the buttons
-    guiButtons.buttonGround = buttons.register(1, 1, 3, 2, colors.white, colors.green, "G", function() buttonPressed(1) end)
-    guiButtons.buttonFirst = buttons.register(5, 1, 3, 2, colors.white, colors.lightGray, "1", function() buttonPressed(2) end)
-    guiButtons.buttonSecond = buttons.register(1, 4, 3, 2, colors.white, colors.lightGray, "2", function() buttonPressed(3) end)
-    guiButtons.buttonThird = buttons.register(5, 4, 3, 2, colors.white, colors.lightGray, "3", function() buttonPressed(4) end)
-    guiButtons.buttonFourth = buttons.register(1, 7, 3, 2, colors.white, colors.lightGray, "4", function() buttonPressed(5) end)
-    guiButtons.buttonFifth = buttons.register(5, 7, 3, 2, colors.white, colors.lightGray, "5", function() buttonPressed(6) end)
+    guiButtons.buttonGround = buttons.register(1, 1, 3, 2, colors.white, otherFloorColor, "G", function() buttonPressed(1) end)
+    guiButtons.buttonFirst = buttons.register(5, 1, 3, 2, colors.white, otherFloorColor, "1", function() buttonPressed(2) end)
+    guiButtons.buttonSecond = buttons.register(1, 4, 3, 2, colors.white, otherFloorColor, "2", function() buttonPressed(3) end)
+    guiButtons.buttonThird = buttons.register(5, 4, 3, 2, colors.white, otherFloorColor, "3", function() buttonPressed(4) end)
+    guiButtons.buttonFourth = buttons.register(1, 7, 3, 2, colors.white, otherFloorColor, "4", function() buttonPressed(5) end)
+    guiButtons.buttonFifth = buttons.register(5, 7, 3, 2, colors.white, otherFloorColor, "5", function() buttonPressed(6) end)
 
     -- Make sure we draw on the monitor
     buttons.setTarget(mon)
-    buttons.draw()
+    updateButtons()
 end
 
 local function tick()
