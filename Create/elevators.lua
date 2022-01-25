@@ -5,9 +5,9 @@ os.loadAPI("disk/buttons.lua")
 -- Configuration --
 -------------------
 
-local myFloor = 0
-local minFloor = 0
-local maxFloors = 5
+local myFloor = 1
+local minFloor = 1
+local maxFloors = 6
 
 -- Direction control
 local redstoneSide = "back"
@@ -24,52 +24,52 @@ local mon = peripheral.find("monitor")
 local mod = peripheral.find("modem")
 
 -- State tracking
-local currentFloor = 0
+local currentFloor = 1
 local running = true
 local moving = false
 local movingTimer = nil
 local transitionTimes = {
-    [0] = {
-        [1] = 10,
+    [1] = {
         [2] = 10,
         [3] = 10,
         [4] = 10,
-        [5] = 10
-    },
-    [1] = {
-        [0] = 10,
-        [2] = 1.1,
-        [3] = 10,
-        [4] = 2.5,
-        [5] = 6.5
+        [5] = 10,
+        [6] = 10
     },
     [2] = {
-        [0] = 10,
-        [1] = 1.1,
-        [3] = 10,
-        [4] = 2,
-        [5] = 5.5
+        [1] = 10,
+        [3] = 1.1,
+        [4] = 10,
+        [5] = 2.5,
+        [6] = 6.5
     },
     [3] = {
-        [0] = 10,
         [1] = 10,
-        [2] = 10,
+        [2] = 1.1,
         [4] = 10,
-        [5] = 10
+        [5] = 2,
+        [6] = 5.5
     },
     [4] = {
-        [0] = 10,
-        [1] = 2.5,
-        [2] = 1.5,
+        [1] = 10,
+        [2] = 10,
         [3] = 10,
-        [5] = 4.25
+        [5] = 10,
+        [6] = 10
     },
     [5] = {
-        [0] = 10,
-        [1] = 6.5,
-        [2] = 5.5,
-        [3] = 10,
-        [4] = 4.5
+        [1] = 10,
+        [2] = 2.5,
+        [3] = 1.5,
+        [4] = 10,
+        [6] = 4.25
+    },
+    [6] = {
+        [1] = 10,
+        [2] = 6.5,
+        [3] = 5.5,
+        [4] = 10,
+        [5] = 4.5
     }
 }
 
@@ -195,12 +195,12 @@ end
 
 local function renderButtons()
     -- Create the buttons
-    guiButtons.buttonGround = buttons.register(1, 1, 3, 2, colors.white, colors.green, "G", function() buttonPressed(0) end)
-    guiButtons.buttonFirst = buttons.register(5, 1, 3, 2, colors.white, colors.lightGray, "1", function() buttonPressed(1) end)
-    guiButtons.buttonSecond = buttons.register(1, 4, 3, 2, colors.white, colors.lightGray, "2", function() buttonPressed(2) end)
-    guiButtons.buttonThird = buttons.register(5, 4, 3, 2, colors.white, colors.lightGray, "3", function() buttonPressed(3) end)
-    guiButtons.buttonFourth = buttons.register(1, 7, 3, 2, colors.white, colors.lightGray, "4", function() buttonPressed(4) end)
-    guiButtons.buttonFifth = buttons.register(5, 7, 3, 2, colors.white, colors.lightGray, "5", function() buttonPressed(5) end)
+    guiButtons.buttonGround = buttons.register(1, 1, 3, 2, colors.white, colors.green, "G", function() buttonPressed(1) end)
+    guiButtons.buttonFirst = buttons.register(5, 1, 3, 2, colors.white, colors.lightGray, "1", function() buttonPressed(2) end)
+    guiButtons.buttonSecond = buttons.register(1, 4, 3, 2, colors.white, colors.lightGray, "2", function() buttonPressed(3) end)
+    guiButtons.buttonThird = buttons.register(5, 4, 3, 2, colors.white, colors.lightGray, "3", function() buttonPressed(4) end)
+    guiButtons.buttonFourth = buttons.register(1, 7, 3, 2, colors.white, colors.lightGray, "4", function() buttonPressed(5) end)
+    guiButtons.buttonFifth = buttons.register(5, 7, 3, 2, colors.white, colors.lightGray, "5", function() buttonPressed(6) end)
 
     -- Make sure we draw on the monitor
     buttons.setTarget(mon)
