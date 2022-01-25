@@ -46,7 +46,7 @@ local transitionTimes = {
     [4] = {
         [1] = 6.5,
         [2] = 5.5,
-        [3] = 4.25
+        [3] = 4.5
     }
 }
 
@@ -59,9 +59,9 @@ local redstoneChan = 101
 -------------------
 
 -- Floor channels
-mod.open(1)
-mod.open(2)
-mod.open(3)
+for c = 1, maxFloors do
+    mod.open(c)
+end
 -- Movement reporting channel
 mod.open(movingChan)
 -- Redstone direction channel
