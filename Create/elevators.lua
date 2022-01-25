@@ -10,7 +10,7 @@ local minFloor = 0
 local maxFloors = 5
 
 -- Direction control
-local redstoneSide = "right"
+local redstoneSide = "back"
 
 -- Piston control
 local pistonSide = "bottom"
@@ -200,7 +200,7 @@ local function renderButtons()
     guiButtons.buttonSecond = buttons.register(1, 4, 3, 2, colors.white, colors.lightGray, "2", function() buttonPressed(2) end)
     guiButtons.buttonThird = buttons.register(5, 4, 3, 2, colors.white, colors.lightGray, "3", function() buttonPressed(3) end)
     guiButtons.buttonFourth = buttons.register(1, 7, 3, 2, colors.white, colors.lightGray, "4", function() buttonPressed(4) end)
-    guiButtons.buttonFiften = buttons.register(5, 7, 3, 2, colors.white, colors.lightGray, "5", function() buttonPressed(5) end)
+    guiButtons.buttonFifth = buttons.register(5, 7, 3, 2, colors.white, colors.lightGray, "5", function() buttonPressed(5) end)
 
     -- Make sure we draw on the monitor
     buttons.setTarget(mon)
