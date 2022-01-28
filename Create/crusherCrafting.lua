@@ -6,11 +6,11 @@ local fuelPlace = 14
 local fuelCount = 10
 local minFuel = 35
 
-local function getSupply(count, name)
+local function getSupply(count, name, fn)
     -- don't bother getting more if we have enough
     if turtle.getItemCount() >= count then return true end
 
-    if not turtle.suck(count) then
+    if not (fn or turtle.suck)(count) then
         print("Failed to pick up " .. name .. ", please check pathing and shelf access.")
         return false
     end
