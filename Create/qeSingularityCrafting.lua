@@ -29,7 +29,7 @@ while (true) do
     if singularityCount > 0 then
         turtle.drop()
     end
-    while not getSupply(nil, "Singularity", turtle.suckDown) do
+    while not getSupply(nil, "Singularity") do
         sleep(30)
     end
     singularityCount = turtle.getItemCount()
@@ -39,14 +39,14 @@ while (true) do
     if enderDustCount > 0 then
         turtle.drop()
     end
-    while not getSupply(nil, "Ender Dust", turtle.suckUp) do
+    while not getSupply(nil, "Ender Dust") do
         sleep(30)
     end
     enderDustCount = turtle.getItemCount()
     turtle.turnRight()
 -- tnt
     turtle.select(tntPlace)
-    while not getSupply(tntCount, "TNT", turtle.suckDown) do
+    while not getSupply(tntCount, "TNT") do
         sleep(30)
     end
     turtle.turnRight()
@@ -56,20 +56,25 @@ while (true) do
     enderDustCount = enderDustCount - commonCount
     singularityCount = singularityCount - commonCount
 -- drop
-	turtle.select(enderDustPlace)
-    turtle.placeDown(commonCount)
-	turtle.select(singularityPlace)
-    turtle.placeDown(commonCount)
-	--turtle.select(tntPlace)
-    --turtle.placeDown(tntCount)
+    turtle.select(enderDustPlace)
+    turtle.dropDown(commonCount)
+    turtle.select(singularityPlace)
+    turtle.dropDown(commonCount)
+    turtle.select(tntPlace)
+    turtle.placeDown(tntCount)
     turtle.turnRight()
 -- qe singularity
     turtle.select(qeSingularityPlace)
+    sleep(5)
     while not turtle.suckDown() do
         print("No QE Singularities found. Waiting 5 seconds and trying again...")
         sleep(5)
     end
     turtle.dropUp()
+-- pick up all of them
+    while turtle.suckDown() do
+        turtle.dropUp()
+    end
 end
 
 print("Crafting terminated")
