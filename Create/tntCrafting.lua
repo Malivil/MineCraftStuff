@@ -2,9 +2,6 @@ local sandPlace = 1
 local sandCount = 4
 local gunpowderPlace = 2
 local gunpowderCount = 5
-local fuelPlace = 14
-local fuelCount = 10
-local minFuel = 35
 
 local function getSupply(count, name, fn)
     -- don't bother getting more if we have enough
@@ -25,13 +22,13 @@ end
 while (true) do
 -- sand
 	turtle.select(sandPlace)
-    if not getSupply(sandCount, "Sand", turtle.suckUp) then
-        break
+    while not getSupply(sandCount, "Sand", turtle.suckUp) do
+        sleep(30)
     end
 -- gunpowder
     turtle.select(gunpowderPlace)
-    if not getSupply(gunpowderCount, "Gunpowder", turtle.suckDown) then
-        break
+    while not getSupply(gunpowderCount, "Gunpowder", turtle.suckDown) do
+        sleep(30)
     end
 -- place sand
     turtle.select(sandPlace)
