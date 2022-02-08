@@ -126,7 +126,7 @@ while (checkFuel()) do
 -- pickup fuel
     turtle.up()
     turtle.select(fuelPlace)
-    turtle.select(fuelCount)
+    turtle.suck(fuelCount)
     turtle.refuel()
 -- return to beginning
     turtle.down()
