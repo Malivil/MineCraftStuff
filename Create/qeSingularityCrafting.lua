@@ -26,7 +26,7 @@ end
 while (true) do
 -- singularity
     turtle.select(singularityPlace)
-    if singularityCount > 0 then
+    if turtle.getItemCount() > 0 then
         turtle.drop()
     end
     while not getSupply(nil, "Singularity") do
@@ -36,7 +36,7 @@ while (true) do
     turtle.turnRight()
 -- ender dust
 	turtle.select(enderDustPlace)
-    if enderDustCount > 0 then
+    if turtle.getItemCount() > 0 then
         turtle.drop()
     end
     while not getSupply(nil, "Ender Dust") do
@@ -52,9 +52,6 @@ while (true) do
     turtle.turnRight()
 -- determine drop count
     commonCount = math.min(enderDustCount, singularityCount)
--- subtract from the amount picked so we don't overfill next loop
-    enderDustCount = enderDustCount - commonCount
-    singularityCount = singularityCount - commonCount
 -- drop
     turtle.select(enderDustPlace)
     turtle.dropDown(commonCount)
