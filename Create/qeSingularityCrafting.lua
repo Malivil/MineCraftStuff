@@ -23,6 +23,13 @@ local function getSupply(count, name, fn)
     return true
 end
 
+local function waitDrop(name, fn)
+    while not (fn or turtle.drop)() do
+        print("Cannot drop " .. name .. ". Waiting 1 second and trying again.")
+        sleep(1)
+    end
+end
+
 while (true) do
 -- singularity
     turtle.select(singularityPlace)
@@ -67,10 +74,10 @@ while (true) do
         print("No QE Singularities found. Waiting 5 seconds and trying again...")
         sleep(5)
     end
-    turtle.dropUp()
+    waitDrop("QE Singularities", turtle.dropUp)
 -- pick up all of them
     while turtle.suckDown() do
-        turtle.dropUp()
+        waitDrop("QE Singularities", turtle.dropUp)
     end
 end
 
