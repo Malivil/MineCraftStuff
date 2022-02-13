@@ -1,7 +1,7 @@
 local enderDustPlace = 1
 local enderDustCount = 0
 local singularityPlace = 2
-local singularityCount = 0
+local singularityCount = 25
 local tntPlace = 3
 local tntCount = 1
 local qeSingularityPlace = 4
@@ -36,7 +36,7 @@ while (true) do
     if turtle.getItemCount() > 0 then
         turtle.drop()
     end
-    while not getSupply(nil, "Singularity") do
+    while not getSupply(singularityCount, "Singularity") do
         sleep(30)
     end
     singularityCount = turtle.getItemCount()
@@ -79,6 +79,8 @@ while (true) do
     while turtle.suckDown() do
         waitDrop("QE Singularities", turtle.dropUp)
     end
+-- wait a bit so the next step has time to run
+   sleep(60)
 end
 
 print("Crafting terminated")
