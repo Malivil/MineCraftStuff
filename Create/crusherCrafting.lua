@@ -126,7 +126,10 @@ while (checkFuel()) do
 -- pickup fuel
     turtle.up()
     turtle.select(fuelPlace)
-    turtle.suck(fuelCount)
+    local fuelDiff = fuelCount - turtle.getItemCount()
+    if fuelDiff > 0 then
+        turtle.suck(fuelDiff)
+    end
     turtle.refuel()
 -- return to beginning
     turtle.down()
